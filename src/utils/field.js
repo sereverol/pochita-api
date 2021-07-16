@@ -1,4 +1,3 @@
-// Logic
 const checkFields = (fields) => {
   try {
     let flag = true;
@@ -15,7 +14,4 @@ const checkFields = (fields) => {
   }
 };
 
-// Export
-module.exports = {
-  checkFields,
-};
+module.exports = { checkFields };

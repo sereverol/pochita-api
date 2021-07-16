@@ -5,10 +5,8 @@ const dbQueriesUser = require('../config/queries/user');
 const passwordUtil = require('../utils/password');
 const field = require('../utils/field');
 
-// Variables
 const pool = new Pool(dbConfig);
 
-// Utilities
 const newReponse = (message, typeResponse, body) => {
   return { message, typeResponse, body };
 };
@@ -41,7 +39,6 @@ const checkEmail = async (email, callBack) => {
   }
 };
 
-// Logic
 const login = async (req, res) => {
   const { email, password } = req.body;
   const data = await pool.query(dbQueriesUser.getUserByEmail, [email]);
@@ -135,91 +132,6 @@ const createUsers = (req, res) => {
   }
 };
 
-const updateUserById = (req, res) => {
-  const { name, email } = req.body;
-  const { userId } = req.params;
-  const errors = [];
-
-  if (!field.checkFields([name, email])) {
-    errors.push({ text: 'Please fill in all the spaces' });
-  }
-
-  if (errors.length > 0) {
-    res.json(newReponse('Errors detected', 'Fail', { errors }));
-  } else {
-    checkEmail(email, async (err, users) => {
-      if (err) {
-        res.json(newReponse(err, 'Error', {}));
-      } else if (!users) {
-        res.json(newReponse('User not found', 'Error', {}));
-      } else {
-        if (users[0].id != userId) {
-          res.json(newReponse(`Email ${email} already use`, 'Error', {}));
-        } else {
-          const data = await pool.query(dbQueriesUser.updateUserById, [
-            name,
-            email,
-            userId,
-          ]);
-
-          data
-            ? res.json(newReponse('User updated', 'Success', {}))
-            : res.json(newReponse('Error on update', 'Error', {}));
-        }
-      }
-    });
-  }
-};
-
-const updatePassById = async (req, res) => {
-  const { password, confirmPassword, oldPassword } = req.body;
-  const { userId } = req.params;
-  const errors = [];
-
-  if (!field.checkFields([password, confirmPassword, oldPassword, userId])) {
-    errors.push({ text: 'Please fill in all the spaces' });
-  }
-
-  if (!passwordUtil.checkPass(password, confirmPassword)) {
-    errors.push({
-      text: 'passwords must be uppercase, lowercase, special characters, have more than 8 digits and match each other',
-    });
-  }
-
-  if (errors.length > 0) {
-    res.json(newReponse('Errors detected', 'Fail', { errors }));
-  } else {
-    const user = await pool.query(dbQueriesUser.getUserById, [userId]);
-
-    if (user) {
-      if (user.rowCount <= 0) {
-        res.json(newReponse('User not found', 'Error', {}));
-      } else {
-        if (await bcryt.compare(oldPassword, user.rows[0].user_pas)) {
-          passwordUtil.encryptPass(password, async (err, hash) => {
-            if (err) {
-              res.json(newReponse(err, 'Error', {}));
-            } else {
-              const data = await pool.query(dbQueriesUser.updatePassById, [
-                hash,
-                userId,
-              ]);
-
-              data
-                ? res.json(newReponse('Pass updated', 'Success', {}))
-                : res.json(newReponse('Error on update', 'Error', {}));
-            }
-          });
-        } else {
-          res.json(newReponse('Old password no match', 'Error', {}));
-        }
-      }
-    } else {
-      res.json(newReponse('Error searshing user', 'Error', {}));
-    }
-  }
-};
-
 const deleteUserById = async (req, res) => {
   const { userId } = req.params;
   const data = await pool.query(dbQueriesUser.deleteUserById, [userId]);
@@ -229,13 +141,10 @@ const deleteUserById = async (req, res) => {
     : res.json(newReponse('Error on delete with id', 'Error', {}));
 };
 
-// Export
 module.exports = {
   login,
   getUser,
   createUsers,
   getUserById,
-  updateUserById,
-  updatePassById,
   deleteUserById,
 };

@@ -1,6 +1,5 @@
 const bcryt = require('bcryptjs');
 
-// Logic
 const checkPass = (pass, confirmPass) => {
   if (pass.length >= 8) {
     let capitalLetter = false;
@@ -50,8 +49,4 @@ const encryptPass = async (pass, callBack) => {
   }
 };
 
-// Export
-module.exports = {
-  encryptPass,
-  checkPass,
-};
+module.exports = { encryptPass, checkPass };
