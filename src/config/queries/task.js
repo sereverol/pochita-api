@@ -11,7 +11,7 @@ module.exports = {
 
   getTaskByListId: `SELECT * FROM ${table} WHERE list_ide = $1`,
 
-  updateTaskTittleById: `UPDATE ${table} SET task_tit = $1 WHERE task_ide = $2`,
+  updateTaskTitleById: `UPDATE ${table} SET task_tit = $1 WHERE task_ide = $2`,
 
   updateTaskNoteById: `UPDATE ${table} SET task_des = $1 WHERE task_ide = $2`,
 
