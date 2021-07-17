@@ -1,7 +1,7 @@
 const table = 'archive';
 
 module.exports = {
-  createArchive: `INSERT INTO ${table} (archive_jso, task_ide) VALUES ($1, $2)`,
+  createArchive: `INSERT INTO ${table} (task_ide, filename, filepath, mimetype, size) VALUES ($1, $2, $3, $4, $5)`,
 
   getAllArchives: `SELECT * FROM ${table}`,
 
